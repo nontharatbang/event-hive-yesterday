@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html * {
+    color: #1B2A4E;
+    font-size: 16px;
+    line-height: 1.625;
+    font-family: Nunito, sans-serif;
+  }
+
+body {
+  background-color:#F3F4F4;
+}

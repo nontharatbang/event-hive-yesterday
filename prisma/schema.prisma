@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Visitor {
+  id              String  @id @default(uuid())
+  firstName       String
+  lastName        String
+  image           String?
+  email           String  @unique
+  password        String
+  tags            Tag[]   @relation("VisitorTag")
+  favouriteShops  Shop[]  @relation("FollowedShop")
+  favouriteEvents Event[] @relation("FollowedEvent")
+}
+
+model ShopOwner {
+  id        String  @id @default(uuid())
+  firstName String
+  lastName  String
+  image     String?
+  email     String
+  password  String
+  shop      Shop?   @relation("ShopOwner")
+}
+
+model EventOrganizer {
+  id          String  @id @default(uuid())
+  companyName String
+  image       String?
+  email       String
+  password    String
+  events      Event[] @relation("EventOrganizer")
+}
+
+model Shop {
+  id                  String    @id @default(uuid())
+  shopName            String
+  about               String
+  address             String
+  picture             String
+  tags                Tag[]     @relation("ShopTag")
+  telephone           String
+  facebook            String?
+  instagram           String?
+  line                String?
+  tiktok              String?
+  shopOwner           ShopOwner @relation("ShopOwner", fields: [shopOwnerId], references: [id])
+  shopOwnerId         String    @unique
+  eventApplications   Event[]   @relation("Application")
+  eventParticipations Event[]   @relation("Participation")
+  favouriteByVisitors Visitor[] @relation("FollowedShop")
+  products            Product[]
+}
+
+model Event {
+  id                  String         @id @default(cuid())
+  eventName           String
+  about               String
+  location            String
+  picture             String
+  tags                Tag[]          @relation("EventTag")
+  startDate           DateTime
+  endDate             DateTime
+  telephone           String
+  facebook            String?
+  instagram           String?
+  line                String?
+  tiktok              String?
+  eventOrganizer      EventOrganizer @relation("EventOrganizer", fields: [eventOrganizerId], references: [id])
+  eventOrganizerId    String
+  shopApplications    Shop[]         @relation("Application")
+  shopParticipations  Shop[]         @relation("Participation")
+  favouriteByVisitors Visitor[]      @relation("FollowedEvent")
+}
+
+model Product {
+  id          String @id @default(uuid())
+  productName String
+  description String
+  price       Int
+  shop        Shop?  @relation(fields: [shopId], references: [id])
+  shopId      String
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  tagName  String
+  visitors Visitor[] @relation("VisitorTag")
+  shops    Shop[]    @relation("ShopTag")
+  events   Event[]   @relation("EventTag")
+}
